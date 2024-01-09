@@ -20,11 +20,6 @@ for i = 1:numIterations
     y(i+1) = y(i) + dt * f(t(i), y(i)); % Update y using the derivative function f(t, y)
 end
 
-% Define the derivative function
-function dydt = f(t, y)
-    dydt = -2 * t * y; % Example derivative function
-end
-
 % Plot the results
 figure;
 plot(t, y, 'r-');
@@ -32,3 +27,8 @@ title('Solution using Euler''s forward method');
 xlabel('Time (t)');
 ylabel('y(t)');
 grid on;
+
+% Define the derivative function
+function dydt = f(t, y)
+    dydt = -2 * t * y; % Example derivative function
+end
