@@ -9,15 +9,15 @@ lambda_b=109; % W/m/K
 load PM_case3_data           % measured data
 dt = t(2)-t(1);              % time step measurement (s)
 
-T0 = 21.6;                      % temperature (constant) at t = 0 s (캜)
-TL = 40;                      % temperature (vector = function of time t) at x = 0 m (캜)
-Tw = max(TL);                % temperature water (캜)
+T0 = 21.6;                      % temperature (constant) at t = 0 s (째C)
+TL = 40;                      % temperature (vector = function of time t) at x = 0 m (째C)
+Tw = max(TL);                % temperature water (째C)
 
 % plot measured data
 figure(1)
 plot(t,T)
 xlabel('time {\it{t}} (s)')
-ylabel('temperatures {\it{T}} (캜)')
+ylabel('temperatures {\it{T}} (째C)')
 title('measured data')
 legend('0 cm','2 cm','4 cm','8 cm','16 cm','20 cm','30 cm','location','southeast')
 V = axis; axis([0 max(t) floor(T0) ceil(max(max(T)))]);
@@ -60,17 +60,13 @@ MR(Nx,Nx) = 1-h-g;
 MR(Nx,Nx-1) = h;
 B(Nx,1)=2*g*T_a;
 
-Tsim = T0*one;               % temperature at t = 0 s (캜)
+Tsim = T0*one;               % temperature at t = 0 s (째C)
 
 % TLx = interp1(t,TL,tsim);    % resample
 
 for i = 1:Nt-1
 %    Tw = TLx(i);
-   % count=1;
-   % if mod(i,20)==0
-   %      B(count)=T(count,1);
-   %      count=count+1;
-   % end
+   if i/()
    B(1) = Tw;
    Tsim(:,i+1) = inv(ML)*(MR*Tsim(:,i)+B);
 end
@@ -95,7 +91,7 @@ maxT = ceil(max([max(max(Tsim)) max(max(T))]));
 % temperature against time
 figure(2)
 plot(t,T,tsim,Tsim(:,xpos),'--')
-xlabel('time {\it{t}} (s)'); ylabel('temperatures {\it{T}} (캜)')
+xlabel('time {\it{t}} (s)'); ylabel('temperatures {\it{T}} (째C)')
 legend('0 cm','2 cm','4 cm','8 cm','16 cm','20 cm','30 cm','0 cm CN','2 cm CN','4 cm CN','8 cm CN','16 cm CN','20 cm CN','30 cm CN','location','southeast')
 title(tt)
 % V = axis; axis([0 max(t) minT maxT]);
@@ -104,7 +100,7 @@ shg
 % temperature against position
 figure(3)
 plot(xplot,T([1 3 5 7],:)',xsim(xpos),Tsim(tpos,xpos)','--')
-xlabel('position {\it{x}} (m)'); ylabel('temperatures {\it{T}} (캜)')
+xlabel('position {\it{x}} (m)'); ylabel('temperatures {\it{T}} (째C)')
 legend('0 s','40 s','80 s','120 s','0 s CN','40 s CN','80 s CN','120 s CN','location','southeast')
 title(tt)
 V = axis; axis([0 max(xplot) minT maxT]);
@@ -113,7 +109,7 @@ shg
 % 3D: temperature against position and time
 figure(4)
 mesh(xsim,tsim,Tsim)
-xlabel('position {\it{x}} (m)'); ylabel('time {\it{t}} (s)'); zlabel('temperatures {\it{T}} (캜)')
+xlabel('position {\it{x}} (m)'); ylabel('time {\it{t}} (s)'); zlabel('temperatures {\it{T}} (째C)')
 title(tt)
 view([45 30])
 V = axis; axis([0 max(xsim) 0 max(tsim) minT maxT]);
