@@ -63,6 +63,7 @@ B(Nx,1)=2*g*T_a;
 Tsim = T0*one;               % temperature at t = 0 s (°C)
 
 % TLx = interp1(t,TL,tsim);    % resample
+T_exp_avg=mean(T(:,1));
 
 for i = 1:Nt-1
 %    Tw = TLx(i);
@@ -72,6 +73,7 @@ for i = 1:Nt-1
    %      count=count+1;
    % end
    B(1) = Tw;
+   % B(1) = T_exp_avg;
    Tsim(:,i+1) = inv(ML)*(MR*Tsim(:,i)+B);
 end
 Tsim = Tsim';
