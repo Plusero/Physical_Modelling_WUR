@@ -19,11 +19,11 @@ A=pi*r^2;
 %Resistance per volume, Ohm/m3
 resistivity_vol=resistivity_c/(A^2);
 %constant c for cable
-% c_c=lambda_c/(rho_c*cp_c);
-c_c=lambda_c;
+c_c=lambda_c/(rho_c*cp_c);
+% c_c=lambda_c;
 %constant f for cable
-% f_c=I^2*resistivity_vol/(cp_c*rho_c);
-f_c=I^2*resistivity_vol;
+f_c=I^2*resistivity_vol/(cp_c*rho_c);
+% f_c=I^2*resistivity_vol;
 
 %% Calculation of cable insulation
 %thermal conductivity, W/m/K
@@ -33,8 +33,8 @@ cp_i= 2000;
 %density of insulation material, kg/m3
 rho_i=920;
 %C factor for insulation material
-% c_i=lambda_i/(rho_i*cp_i);
-c_i=lambda_i;
+c_i=lambda_i/(rho_i*cp_i);
+% c_i=lambda_i;
 
 %% Heat Transfer Coeffient for boundary
 %lambda of air, W/m/K
