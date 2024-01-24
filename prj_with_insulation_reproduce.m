@@ -13,7 +13,7 @@ A=pi*r^2;
 %Resistance per volume, Ohm/m3
 resistivity_vol=resistivity_c/(A^2);
 %current in cable, A
-I=936;
+I=1600;
 %constant c for cable
 c_c=lambda_c;
 %constant f for cable

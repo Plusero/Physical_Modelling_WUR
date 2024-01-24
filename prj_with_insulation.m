@@ -9,11 +9,11 @@ rho_c=8960;
 %thermal capacity of cable material, J/kg/K
 cp_c=390;
 %current in cable, A
-I=1000;
+I=17.6*1e3;
 %copper resisitvitiy, Ohm*m
 resistivity_c=1.68*10^-8;
 %radius of cable cross section, m
-r=0.13/2;
+r=0.0129/2;
 %cross sectional area of cable, m2
 A=pi*r^2;
 %Resistance per volume, Ohm/m3
@@ -46,10 +46,10 @@ cp_a=4200;
 %density air, kg/m3
 rho_a=1.3;
 %velocity of air, m/s
-vel_a=4; % in July
+vel_a=1; % in July
 
 %thickness of insulation, m
-th=0.13;
+th=0.013;
 %Pr number
 pr_a= (mu_a*cp_a)/lambda_a;
 %Reynolds number
@@ -87,7 +87,7 @@ pdegplot(model,"EdgeLabels","on","FaceLabels","on")
 xlim([-2*r 2*r])
 axis equal
 
-msh=generateMesh(model,"Hmax",0.01);
+msh=generateMesh(model,"Hmax",0.001);
 figure
 pdemesh(msh)
 axis equal
@@ -98,7 +98,8 @@ applyBoundaryCondition(model,"neumann", ...
                              "g",@bcfuncN);
 
 %sets initial conditions                         
-setInitialConditions(model,25);
+setInitialConditions(model,25); 
+% THE INITIAL CONDITION SHOULD BE DIFFERENT FROM AIR TEMP
 
 % Specify Coefficient of PDE
 specifyCoefficients(model,"m",0,"d",0,"c",c_c,"a",0,"f",f_c,"Face",1);
@@ -121,7 +122,7 @@ hold on
 function bc = bcfuncN(location,state);
     global alpha;
     %Convection term
-    Ta=20;
+    Ta=35;
     bc = alpha*(state.u-Ta);
     % scatter(location.x/2,location.y/2,"filled","red");
     hold on 
