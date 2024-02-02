@@ -9,7 +9,7 @@ rho_c=8960;
 %thermal capacity of cable material, J/kg/K
 cp_c=390;
 %current in cable, A
-I=1600;
+I=1000;
 %copper resisitvitiy, Ohm*m
 resistivity_c=1.68*10^-8;
 %radius of cable cross section, m
@@ -47,6 +47,8 @@ cp_a=4200;
 rho_a=1.3;
 %velocity of air, m/s
 vel_a=1; % in July
+c_a=lambda_a/(rho_a*cp_a);
+% c_a=lambda_a;
 
 %thickness of insulation, m
 th=0.013;
@@ -68,6 +70,81 @@ C2 = [1
     0
     0
     r+th];
+x_cir=0.013;
+y_cir=0;
+r_cir=0.006;
+C3=[1
+    x_cir
+    y_cir
+    r_cir
+];
+geom = [C1 C2 C3];
+ns = char('C1','C2','C3');
+ns = ns';
+sf = 'C1+C2+C3';
+
+% Create geometry
+g = decsg(geom,sf,ns);
+
+% Create geometry model
+model = createpde
+
+% Include the geometry in the model
+% and view the geometry
+geometryFromEdges(model,g);
+figure
+pdegplot(model,"EdgeLabels","on","FaceLabels","on")
+xlim([-2*r 2*r])
+
+msh=generateMesh(model,"Hmax",0.001);
+figure
+pdemesh(msh)
+
+%% apply Neumann Boundary condition
+applyBoundaryCondition(model,"neumann", ...
+                             "Edge",[5:8], ...
+                             "g",@bcfuncN);
+
+%sets initial conditions                         
+setInitialConditions(model,25); 
+% THE INITIAL CONDITION SHOULD BE DIFFERENT FROM AIR TEMP
+
+% Specify Coefficient of PDE
+specifyCoefficients(model,"m",0,"d",0,"c",c_c,"a",0,"f",f_c,"Face",2);
+specifyCoefficients(model,"m",0,"d",0,"c",c_i,"a",0,"f",0,"Face",1);
+specifyCoefficients(model,"m",0,"d",0,"c",c_a,"a",0,"f",0,"Face",3);
+% d=0, for steady state; d=1, for transient
+
+theta = linspace(0, 2*pi, 100);  % Generate 100 points around the circle
+x = r*cos(theta);
+y = r*sin(theta);
+
+results = solvepde(model);
+u = results.NodalSolution;
+
+pdeplot(model,"XYData",u)
+hold on
+plot(x, y);
+axis equal; 
+hold on
+
+% set x values for which temperature is needed
+x_values = linspace(0, (r+th), 10); 
+%create array with same size as x to append T vals to
+y_values = zeros(size(x_values));
+
+% Evaluate the temperature along the x-axis
+for a = 1:length(x_values)
+    x = x_values(a);
+    y_values(a) = interpolateSolution(results,x,0);
+end
+figure;
+plot(x_values, y_values, 'LineWidth', 2);
+xlabel('Spatial Direction (x)');
+ylabel('Temperature (C^{\circ})');
+title('Temperature Profile');
+
+%%%%%%%%%%%%%%%%%%%%%%
 geom = [C1 C2];
 ns = char('C1','C2');
 ns = ns';
@@ -85,12 +162,10 @@ geometryFromEdges(model,g);
 figure
 pdegplot(model,"EdgeLabels","on","FaceLabels","on")
 xlim([-2*r 2*r])
-axis equal
 
 msh=generateMesh(model,"Hmax",0.001);
 figure
 pdemesh(msh)
-axis equal
 
 %% apply Neumann Boundary condition
 applyBoundaryCondition(model,"neumann", ...
@@ -105,7 +180,7 @@ setInitialConditions(model,25);
 specifyCoefficients(model,"m",0,"d",0,"c",c_c,"a",0,"f",f_c,"Face",1);
 specifyCoefficients(model,"m",0,"d",0,"c",c_i,"a",0,"f",0,"Face",2);
 % d=0, for steady state; d=1, for transient
-
+    
 theta = linspace(0, 2*pi, 100);  % Generate 100 points around the circle
 x = r*cos(theta);
 y = r*sin(theta);
@@ -113,11 +188,26 @@ y = r*sin(theta);
 results = solvepde(model);
 u = results.NodalSolution;
 
-pdeplot(model,"XYData",u)
-hold on
-plot(x, y);
-axis equal; 
-hold on
+% set x values for which temperature is needed
+x_values_1 = linspace(0, (r+th), 10); 
+%create array with same size as x to append T vals to
+y_values_1 = zeros(size(x_values));
+
+% Evaluate the temperature along the x-axis
+for a = 1:length(x_values)
+    x = x_values_1(a);
+    y_values_1(a) = interpolateSolution(results,x,0);
+end
+figure;
+plot(x_values, y_values, 'LineWidth', 2);
+hold on 
+plot(x_values_1, y_values_1, 'LineWidth', 2);
+xlabel('Spatial Direction (x)');
+ylabel('Temperature (C^{\circ})');
+legend('Void','No Void')
+
+title('Temperature Profile');
+% 1000A here
 
 function bc = bcfuncN(location,state);
     global alpha;
